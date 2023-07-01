@@ -1,0 +1,4 @@
+dest_dir = "~/IntuitBackup/Backups"
+record_dir = "~/IntuitBackup/Records"
+info_dir = "~/IntuitBackup/Info"
+password = "<your password>"

@@ -1,71 +1,49 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os, sys, configparser, shutil
+import os, sys
 from intuitbackuputil import IntuitBackup
 
-def select(options):
-    print("Please select an option:")
+def select(options, prompt = None):
+    print()
+    if prompt is None:
+        print("Please select an option:")
+    else:
+        print(f"[{prompt}] Please select an option:")
     for i, item in enumerate(options):
-        print(i, item)
+        print(i + 1, item)
 
-    try:
-        choice = int(input("Enter your choice (num): "))
-    except ValueError:
-        choice = len(options)
-    if choice < 0:
-        choice = len(options)
-
-    return choice
-
-def prepare():
-    script_path = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-
-    config_path = os.path.join(os.environ["HOME"], ".config", "intuitbackup", "intuitbackup.conf")
-    if not os.path.exists(config_path):
-        print(os.getegid(), os.geteuid())
-        os.makedirs(os.path.dirname(config_path), exist_ok=True)
-        example_config_path = os.path.join(script_path, "example.conf")
-        shutil.copy(example_config_path, config_path)
-
-    config = configparser.ConfigParser()
-    config.read(config_path)
-    dest_dir = config.get("base", "dest_dir").strip()
-    dest_dir = os.path.expanduser(dest_dir)
-    if not os.path.exists(dest_dir):
-        os.makedirs(dest_dir)
-    record_dir = config.get("base", "record_dir").strip()
-    record_dir = os.path.expanduser(record_dir)
-    if not os.path.exists(record_dir):
-        os.makedirs(record_dir)
-    info_dir = config.get("base", "info_dir").strip()
-    info_dir = os.path.expanduser(info_dir)
-    if not os.path.exists(info_dir):
-        os.makedirs(info_dir)
-        example_info_cmd_path = os.path.join(script_path, "example_info_cmd")
-        info_cmd_path = os.path.join(info_dir, "info_cmd")
-        shutil.copy(example_info_cmd_path, info_cmd_path)
-        os.chmod(info_cmd_path, 0o755)
+    while True:
+        try:
+            choice = input("Enter your choice (num): ").strip()
+            if choice == '':
+                print("No choice.")
+                return None
+            choice = int(choice)
+            if 1 <= choice <= len(options):
+                return choice - 1
+            else:
+                print("Invalid choice. Please enter a number within the range.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
 
 def main():
     if os.geteuid() != 0:
-        prepare()
-
         os.execvp("sudo", ["sudo", * sys.argv])
-        return 0
 
     intuit_backup = IntuitBackup()
     record_dir = intuit_backup.get_record_dir()
     dest_dir = intuit_backup.get_dest_dir()
 
-    options = ["backup", "extract", "restore", "list_files", "check_record", "cat_record", "backup_info", "restart", "exit"]
+    options = ["backup", "extract", "restore", "list_files", "check_record", "cat_record", "gen_info", "restart", "exit"]
+    choiced_options = []
     while True:
-        print()
-        choice = select(options)
-        if choice >= len(options):
-            print("Invalid selection, please try again")
-            continue
-        choiced_option = options[choice]
+        if len(choiced_options) == 0:
+            choice = select(options)
+            if choice is None:
+                continue
+            choiced_options.append(options[choice])
+        choiced_option = choiced_options[-1]
 
         def get_record_names():
             record_names = [f for f in os.listdir(record_dir) if os.path.isfile(os.path.join(record_dir, f))]
@@ -79,62 +57,67 @@ def main():
 
         if choiced_option == "backup":
             record_names = get_record_names()
-            index = select(record_names)
-            if index >= len(record_names):
-                print("backward")
+            choice = select(record_names, choiced_option)
+            if choice is None:
+                choiced_options.pop()
                 continue
-            intuit_backup.backup(record_names[index])
+            intuit_backup.backup(record_names[choice])
 
         elif choiced_option == "extract":
             archive_names = get_archive_names()
-            index = select(archive_names)
-            if index >= len(archive_names):
-                print("backward")
+            choice = select(archive_names, choiced_option)
+            if choice is None:
+                choiced_options.pop()
                 continue
-            intuit_backup.extract(archive_names[index])
+            intuit_backup.extract(archive_names[choice])
 
         elif choiced_option == "restore":
             archive_names = get_archive_names()
-            index = select(archive_names)
-            if index >= len(archive_names):
-                print("backward")
+            choice = select(archive_names, choiced_option)
+            if choice is None:
+                choiced_options.pop()
                 continue
-            intuit_backup.restore(archive_names[index])
+
+            opts = ["yes", "no"]
+            ch = select(opts, "Note: Your files will be overwritten")
+            if ch is not None: 
+                if opts[ch] == "yes":
+                    intuit_backup.restore(archive_names[choice])
 
         elif choiced_option == "extract":
             archive_names = get_archive_names()
-            index = select(archive_names)
-            if index >= len(archive_names):
-                print("backward")
+            choice = select(archive_names, choiced_option)
+            if choice is None:
+                choiced_options.pop()
                 continue
-            intuit_backup.extract(archive_names[index])
+            intuit_backup.extract(archive_names[choice])
 
         elif choiced_option == "list_files":
             archive_names = get_archive_names()
-            index = select(archive_names)
-            if index >= len(archive_names):
-                print("backward")
+            choice = select(archive_names, choiced_option)
+            if choice is None:
+                choiced_options.pop()
                 continue
-            intuit_backup.list_files(archive_names[index])
+            intuit_backup.list_files(archive_names[choice])
 
         elif choiced_option == "check_record":
             record_names = get_record_names()
-            index = select(record_names)
-            if index >= len(record_names):
-                print("backward")
+            choice = select(record_names, choiced_option)
+            if choice is None:
+                choiced_options.pop()
                 continue
-            intuit_backup.check_record(record_names[index])
+            intuit_backup.check_record(record_names[choice])
 
         elif choiced_option == "cat_record":
             record_names = get_record_names()
-            index = select(record_names)
-            if index >= len(record_names):
-                print("backward")
+            choice = select(record_names, choiced_option)
+            if choice is None:
+                choiced_options.pop()
                 continue
-            intuit_backup.cat_record(record_names[index])
+            intuit_backup.cat_record(record_names[choice])
 
-        elif choiced_option == "backup_info":
-            intuit_backup.backup_info()
+        elif choiced_option == "gen_info":
+            intuit_backup.gen_info()
 
         elif choiced_option == "restart":
             exec = sys.executable
@@ -144,6 +127,8 @@ def main():
             break;
         else:
             sys.stderr.write("Not match the option")
+
+        choiced_options.pop()
 
 if __name__ == "__main__":
     main()
