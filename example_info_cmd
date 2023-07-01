@@ -1,0 +1,20 @@
+#!/bin/bash
+
+function user_cmds() {
+    # ## python
+    python -m pip list -v > pip.list
+    python -m pip freeze > pip.requirements.txt
+
+    # ## nodejs
+    npm list > npm.local.list
+    npm list -g > npm.global.list
+}
+
+# Please specify the username
+su <username> -s /bin/bash -c "$(declare -f user_cmds); user_cmds"
+
+function root_cmds() {
+    :
+}
+
+su root -s /bin/bash -c "$(declare -f root_cmds); root_cmds"
