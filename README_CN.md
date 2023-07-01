@@ -32,3 +32,31 @@ intuit-backup 的相关文件:
 -   check_record: 检查 record 记录的文件。比如: 文件是否存在。
 -   cat_record: 查看 record 文件的内容
 -   backup_info: 备份系统信息。
+
+For example: `~/IntuitBackup/Records/conf`
+
+`#` 开头是注释。
+
+```
+# ## system config files
+/etc/fstab
+/boot/grub/grub.cfg
+/etc/default/grub
+/etc/sudoers
+/etc/environment
+~/.xinitrc
+~/.xprofile
+~/.profile
+
+# ## bash
+~/.bashrc
+~/.bash_profile
+~/.config/bash
+~/.inputrc
+/root/.bashrc
+/root/.bash_profile
+
+# ## zsh
+~/.zshrc
+~/.config/zsh
+```

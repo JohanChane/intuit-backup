@@ -32,3 +32,31 @@ Options:
 -   check_record: Check the record file. For example, whether the file exists.
 -   cat_record: View the contents of the record file.
 -   backup_info: Backup system information.
+
+For example: `~/IntuitBackup/Records/conf`
+
+startwith `#` is a comment.
+
+```
+# ## system config files
+/etc/fstab
+/boot/grub/grub.cfg
+/etc/default/grub
+/etc/sudoers
+/etc/environment
+~/.xinitrc
+~/.xprofile
+~/.profile
+
+# ## bash
+~/.bashrc
+~/.bash_profile
+~/.config/bash
+~/.inputrc
+/root/.bashrc
+/root/.bash_profile
+
+# ## zsh
+~/.zshrc
+~/.config/zsh
+```
