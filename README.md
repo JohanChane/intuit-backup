@@ -11,7 +11,7 @@ Language: [English](./README.md) | [中文](./README_CN.md)
 Install & Start:
 
 ```sh
-git clone https://github.com/JohanChane/intuit-backup.git
+git clone https://github.com/JohanChane/intuit-backup.git --depth 1
 cd intuit-backup
 ./intuitbackup
 ```
