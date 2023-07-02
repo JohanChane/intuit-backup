@@ -42,7 +42,7 @@ class IntuitBackup():
         files = self.__get_files(record_path)
         for f in files:
             if not os.path.exists(f):
-                print(f'"f" is not exist.')
+                print(f'"{f}" is not exist.')
 
     def cat_record(self, record_name):
         record_path = os.path.join(self.__record_dir, record_name)
