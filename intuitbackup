@@ -23,7 +23,6 @@ def prepare():
 
     config_path = os.path.join(os.environ["HOME"], ".config", "intuitbackup", "intuitbackup.conf")
     if not os.path.exists(config_path):
-        print(os.getegid(), os.geteuid())
         os.makedirs(os.path.dirname(config_path), exist_ok=True)
         example_config_path = os.path.join(script_path, "example.conf")
         shutil.copy(example_config_path, config_path)
