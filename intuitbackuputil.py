@@ -25,7 +25,7 @@ class IntuitBackup():
             self.__info_dir = self.__home_dir + self.__info_dir[1:]
 
     def backup(self, record_name):
-        archive_name = record_name + time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime()) + ".tar.gz"
+        archive_name = record_name + '-' + time.strftime('%Y%m%d_%H%M%S', time.localtime()) + ".tar.gz"
         archive_path = os.path.join(self.__dest_dir, archive_name)
 
         record_path = os.path.join(self.__record_dir, record_name)
@@ -33,7 +33,7 @@ class IntuitBackup():
         files_with_quote = []
         for f in files:
             files_with_quote.append(f'"{f}"')
-        cmd = f'tar -cvP -f "{archive_path}" {" ".join(files_with_quote)}'
+        cmd = f'tar -acvP -f "{archive_path}" {" ".join(files_with_quote)}'
         os.system(cmd)
         print(f'Backup successfully: "{archive_path}"')
 
@@ -56,14 +56,14 @@ class IntuitBackup():
         file_name_no_suffix = archive_name.split(".")[0]
         os.mkdir(file_name_no_suffix)
         archive_path = os.path.join(self.__dest_dir, archive_name)
-        cmd = f'tar -xv -f "{archive_path}" -C "{file_name_no_suffix}"'
+        cmd = f'tar -xv -p --same-owner -f "{archive_path}" -C "{file_name_no_suffix}"'
         os.system(cmd)
 
         os.chdir(oldwd)
 
     def restore(self, archive_name):
         archive_path = os.path.join(self.__dest_dir, archive_name)
-        cmd = f'tar -xvP -f {archive_path}'
+        cmd = f'tar -xvP -p --same-owner -f {archive_path}'
         os.system(cmd)
 
     def list_files(self, archive_name):
