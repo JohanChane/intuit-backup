@@ -14,7 +14,7 @@
 git clone https://github.com/JohanChane/intuit-backup.git --depth 1
 # 配置 ~/.cofnig/intuitbackup/config.toml
 cd intuit-backup
-./intuitbackup
+sudo ./intuitbackup      # 因为备份一些系统文件需要 root 权限，最好使用 sudo
 ```
 
 intuit-backup 的相关文件:
@@ -33,31 +33,38 @@ intuit-backup 的相关文件:
 -   list_files: 列出备份压缩包的文件。
 -   check_record: 检查 record 记录的文件。比如: 文件是否存在。
 -   cat_record: 查看 record 文件的内容
--   gen_info: 生成系统信息。
+-   backup_info: 备份系统信息。与 `cmd_info` 有关。
 
-For example: `~/IntuitBackup/Records/confs`
-
-`#` 开头是注释。
+For example: `~/IntuitBackup/Records/sys`。以 `#` 开头是注释。
 
 ```
-# ## IntuitBackup
-# 备份 gen_info 生成的系统信息
-~/IntuitBackup/Info
-~/.config/intuitbackup
-~/IntuitBackup/Records
-
-# ## system config files
+# ## System
 /etc/fstab
 /boot/grub/grub.cfg
 /etc/default/grub
+/etc/mkinitcpio.conf
 /etc/sudoers
+/etc/sudoers.d/my
 /etc/environment
-~/.xinitrc
-~/.xprofile
-~/.profile
+/usr/local/bin
+/etc/hosts
 
+# ## User
+~/.profile
+~/.xprofile
+~/.xinitrc
+~/.local/bin
+~/.config/systemd/user
+```
+
+For example: `~/IntuitBackup/Records/apps`
+
+```
 # ## zsh
 ~/.zshrc
+
+# ## nvim
+~/.config/nvim
 ```
 
 ## Doc

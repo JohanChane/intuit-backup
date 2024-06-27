@@ -35,7 +35,7 @@ def main():
     record_dir = intuit_backup.get_record_dir()
     dest_dir = intuit_backup.get_dest_dir()
 
-    options = ["backup", "extract", "restore", "list_files", "check_record", "cat_record", "gen_info", "restart", "exit"]
+    options = ["backup", "extract", "restore", "list_files", "check_record", "cat_record", "backup_info", "restart", "exit"]
     choiced_options = []
     while True:
         if len(choiced_options) == 0:
@@ -116,8 +116,8 @@ def main():
                 continue
             intuit_backup.cat_record(record_names[choice])
 
-        elif choiced_option == "gen_info":
-            intuit_backup.gen_info()
+        elif choiced_option == "backup_info":
+            intuit_backup.backup_info()
 
         elif choiced_option == "restart":
             exec = sys.executable

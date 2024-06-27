@@ -43,16 +43,18 @@ class IntuitBackup():
     def backup(self, record_name):
         archive_name = record_name + '-' + time.strftime('%Y%m%d_%H%M%S', time.localtime()) + ".tar.gz"
         archive_path = os.path.join(self.__config.dest_dir, archive_name)
-
         record_path = os.path.join(self.__config.record_dir, record_name)
         files = self.__get_files(record_path)
+        self.backup_helper(archive_path, files)
+        print(f'Backup successfully: "{archive_path}"')
+
+    def backup_helper(self, archive_path, files):
         files_with_quote = []
         for f in files:
             files_with_quote.append(f'"{f}"')
         #cmd = f'tar -acvP -f "{archive_path}" {" ".join(files_with_quote)}'
         cmd = f"tar -acvP -f - {' '.join(files_with_quote)} | gpg --batch --yes --symmetric --cipher-algo AES256 --passphrase '{self.__config.password}' --output '{archive_path}.gpg'"
         os.system(cmd)
-        print(f'Backup successfully: "{archive_path}"')
 
     def check_record(self, record_name):
         record_path = os.path.join(self.__config.record_dir, record_name)
@@ -91,7 +93,7 @@ class IntuitBackup():
         cmd = f"gpg --batch --yes --passphrase '{self.__config.password}' -d {archive_path} | tar -tv -f -"
         os.system(cmd)
     
-    def gen_info(self):
+    def backup_info(self):
         oldwd = os.getcwd()
         os.chdir(self.__config.info_dir)
 
@@ -100,6 +102,12 @@ class IntuitBackup():
         os.system(cmd)
 
         os.chdir(oldwd)
+
+        record_name = "cmd_info"
+        archive_name = record_name + '-' + time.strftime('%Y%m%d_%H%M%S', time.localtime()) + ".tar.gz"
+        archive_path = os.path.join(self.__config.dest_dir, archive_name)
+        self.backup_helper(archive_path, [self.__config.info_dir])
+        print(f'Backup successfully: "{archive_path}"')
 
     def get_dest_dir(self):
         return self.__config.dest_dir
